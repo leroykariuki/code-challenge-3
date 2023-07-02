@@ -1,39 +1,49 @@
-const filmDetails = document.getElementById('film-details');
-const filmTitle = document.getElementById('film-title');
-const filmPoster = document.getElementById('film-poster');
-const filmRuntime = document.getElementById('film-runtime');
-const filmShowtime = document.getElementById('film-showtime');
-const filmAvailableTickets = document.getElementById('film-available-tickets');
-const buyTicketBtn = document.getElementById('buy-ticket-btn');
-const filmMenu = document.getElementById('films');
-
-let films = [];
-
-// Fetch all films from the server
-fetch('/films')
+// Fetch movies data from the server
+fetch('db.json')
   .then(response => response.json())
   .then(data => {
-    films = data;
-    populateFilmMenu();
-    showFilmDetails(0);
+    const moviesContainer = document.getElementById('movies');
+    data.films.forEach(movie => {
+      const movieElement = createMovieElement(movie);
+      moviesContainer.appendChild(movieElement);
+    });
   })
-  .catch(error => console.log(error));
+  .catch(error => console.error('Error:', error));
 
-function populateFilmMenu() {
-  filmMenu.innerHTML = '';
-  films.forEach(film => {
-    const li = document.createElement('li');
-    li.textContent = film.title;
-    li.classList.add('film-item');
-    li.addEventListener('click', () => showFilmDetails(film.id));
-    filmMenu.appendChild(li);
-  });
+// Create a movie element based on the movie data
+function createMovieElement(movie) {
+  const movieElement = document.createElement('div');
+  movieElement.classList.add('movie');
+
+  const moviePoster = document.createElement('img');
+  moviePoster.src = movie.poster;
+  movieElement.appendChild(moviePoster);
+
+  const movieInfo = document.createElement('div');
+  movieInfo.classList.add('movie-info');
+
+  const titleElement = document.createElement('h2');
+  titleElement.textContent = movie.title;
+  movieInfo.appendChild(titleElement);
+
+  const runtimeElement = document.createElement('p');
+  runtimeElement.textContent = `Runtime: ${movie.runtime} mins`;
+  movieInfo.appendChild(runtimeElement);
+
+  const capacityElement = document.createElement('p');
+  const ticketsLeft = movie.capacity - movie.tickets_sold;
+  capacityElement.textContent = `Tickets Left: ${ticketsLeft}`;
+  movieInfo.appendChild(capacityElement);
+
+  const showtimeElement = document.createElement('p');
+  showtimeElement.textContent = `Showtime: ${movie.showtime}`;
+  movieInfo.appendChild(showtimeElement);
+
+  const descriptionElement = document.createElement('p');
+  descriptionElement.textContent = movie.description;
+  movieInfo.appendChild(descriptionElement);
+
+  movieElement.appendChild(movieInfo);
+
+  return movieElement;
 }
-
-function showFilmDetails(filmId) {
-  const film = films.find(f => f.id === filmId);
-  if (film) {
-    filmTitle.textContent = film.title;
-    filmPoster.src = film.poster;
-    filmRuntime.textContent = `Runtime: ${film.runtime} mins`;
-    filmShowtime.textContent = `Showtime: ${film
