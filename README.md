@@ -15,7 +15,3 @@ To run the application, follow these steps:
 - Display movie details including poster, title, runtime, showtime, and available tickets.
 - Show a menu of all movies.
 - Allow users to buy tickets for a movie.
-
-## Acknowledgements
-
-The movie data used in this application is fictional and for demonstration purposes only.
